@@ -29,8 +29,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -67,9 +65,6 @@ public class Viewer extends javax.swing.JFrame {
     private SSPlayer player;
     private AnimationModel animModel;
     private File curFile;
-    
-    private final FileFilter ssbpFilter = new FileNameExtensionFilter("Sprite Studio Binary Project (*.ssbp)", "ssbp");
-    private final FileFilter jsonFilter = new FileNameExtensionFilter("Minipedia Sprite Player for WebGL (*.json)", "json");
     
     private Viewer() {
         initComponents();
@@ -163,7 +158,6 @@ public class Viewer extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        fc = new javax.swing.JFileChooser();
         mainSplit = new javax.swing.JSplitPane();
         viewport = new com.minipedia.ssviewer.Viewport();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -175,16 +169,13 @@ public class Viewer extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         mnuOpen = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        mnuExit = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         mnuWebGL = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        mnuToDo = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem4 = new javax.swing.JMenuItem();
-
-        fc.setAcceptAllFileFilterUsed(false);
-        fc.setDialogTitle("Open SSBP");
+        mnuAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Sprite Studio 5 Player");
@@ -234,6 +225,7 @@ public class Viewer extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
+        mnuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         mnuOpen.setText("Open...");
         mnuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -243,8 +235,14 @@ public class Viewer extends javax.swing.JFrame {
         jMenu1.add(mnuOpen);
         jMenu1.add(jSeparator1);
 
-        jMenuItem2.setText("Exit");
-        jMenu1.add(jMenuItem2);
+        mnuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        mnuExit.setText("Exit");
+        mnuExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuExitActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mnuExit);
 
         mainMenu.add(jMenu1);
 
@@ -263,12 +261,12 @@ public class Viewer extends javax.swing.JFrame {
 
         jMenu3.setText("Help");
 
-        jMenuItem3.setText("To-Do List");
-        jMenu3.add(jMenuItem3);
+        mnuToDo.setText("To-Do List");
+        jMenu3.add(mnuToDo);
         jMenu3.add(jSeparator2);
 
-        jMenuItem4.setText("About");
-        jMenu3.add(jMenuItem4);
+        mnuAbout.setText("About");
+        jMenu3.add(mnuAbout);
 
         mainMenu.add(jMenu3);
 
@@ -278,39 +276,58 @@ public class Viewer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mnuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuOpenActionPerformed
-        fc.setFileFilter(ssbpFilter);
+        JFileChooser fc = new JFileChooser();
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setDialogTitle("Open Sprite Studio Binary");
+        fc.setFileFilter(new FileNameExtensionFilter("Sprite Studio Binary Project (*.ssbp)", "ssbp"));
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
             openSSBP(fc.getSelectedFile());
     }//GEN-LAST:event_mnuOpenActionPerformed
 
     private void mnuWebGLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuWebGLActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setDialogTitle("Save Sprite Studio Json");
+        fc.setFileFilter(new FileNameExtensionFilter("Minipedia Sprite Player for WebGL (*.json)", "json"));
         fc.setSelectedFile(FileHelper.changeExtension(curFile, "json"));
-        fc.setFileFilter(jsonFilter);
         if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
                 SSExport exp = new SSExport(player);
                 exp.toWebGL(fc.getSelectedFile());
             } catch (IOException ex) {
-                Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace(System.err);
             }
         }
     }//GEN-LAST:event_mnuWebGLActionPerformed
 
+    private void mnuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuExitActionPerformed
+        dispose();
+    }//GEN-LAST:event_mnuExitActionPerformed
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            Viewer.getInstance().setVisible(true);
+            Viewer viewer = Viewer.getInstance();
+            viewer.setVisible(true);
+            for (int i = 0; i < args.length; i++) {
+                switch (args[i]) {
+                    case "-o":
+                    case "--open":
+                        viewer.openSSBP(new File(args[++i]));
+                        break;
+                        
+                    default:
+                        System.err.printf("Undefined command '%1$s'. Type '-help' for more information.\n", args[i]);
+                        break;
+                }
+            }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable animTable;
-    private javax.swing.JFileChooser fc;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
@@ -318,7 +335,10 @@ public class Viewer extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenuBar mainMenu;
     private javax.swing.JSplitPane mainSplit;
+    private javax.swing.JMenuItem mnuAbout;
+    private javax.swing.JMenuItem mnuExit;
     private javax.swing.JMenuItem mnuOpen;
+    private javax.swing.JMenuItem mnuToDo;
     private javax.swing.JMenuItem mnuWebGL;
     private javax.swing.JTree nodeTree;
     private com.minipedia.ssviewer.Viewport viewport;
