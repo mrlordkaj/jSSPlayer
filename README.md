@@ -1,5 +1,7 @@
 # LibGdx/WebGL Sprite Studio Player
 
+A LibGdx/WebGL Sprite Studio player written in Java/JavaScript. Ported from [ssbpLib](https://github.com/SpriteStudio/ssbpLib) project.
+
 ## Copyright
 Copyright 2018 Thinh Pham.
 
