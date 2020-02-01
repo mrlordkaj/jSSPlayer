@@ -1,6 +1,6 @@
 # jSSPlayer
 
-A LibGdx/WebGL player for playing SpriteStudio's binary files. Ported from C++ version of [ssbpLib](https://github.com/SpriteStudio/ssbpLib) to Java/JavaScript languages.
+A ported player for playing SpriteStudio's binary files on LibGdx/WebGL applications. It also a tool for converting native ssbp to json file format. You should checkout [ssbpLib](https://github.com/SpriteStudio/ssbpLib) for original C++ version.
 
 ## Copyright
 Copyright 2018 Thinh Pham.
