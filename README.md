@@ -1,4 +1,4 @@
-# LibGdx/WebGL Sprite Studio Player
+# JSSplayer
 
 A LibGdx/WebGL Sprite Studio player written in Java/JavaScript. Ported from [ssbpLib](https://github.com/SpriteStudio/ssbpLib) project.
 
