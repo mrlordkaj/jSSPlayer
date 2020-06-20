@@ -31,9 +31,10 @@ public class DemoViewer {
             Viewer viewer = Viewer.getInstance();
             viewer.setVisible(true);
             try {
-                SSPlayer player = viewer.openSSBP(new File("demo/Unit/ch05_28_Camilla_F_ELECTION01/ch05_28_Camilla_F_ELECTION01.ssbp"));
-                SSExport exp = new SSExport(player);
-                exp.toWebGL(null);
+                File demoFile = new File("demo/Unit/ch05_28_Camilla_F_ELECTION01/ch05_28_Camilla_F_ELECTION01.ssbp");
+                SSPlayer player = viewer.openSSBP(demoFile);
+                SSExport exporter = new SSExport(player);
+                exporter.toWebGL(null);
             } catch (IOException ex) {
                 ex.printStackTrace(System.err);
             }
